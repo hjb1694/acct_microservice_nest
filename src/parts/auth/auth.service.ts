@@ -25,7 +25,7 @@ export class AuthService {
         const count = await this.dataSource
         .getRepository(Account)
         .createQueryBuilder('account')
-        .where('user.account_name = :acct_name', {acct_name})
+        .where('account_name = :acct_name', {acct_name})
         .getCount();
 
         return !!count;
@@ -107,10 +107,10 @@ export class AuthService {
 
             await Promise.all([
                 queryRunner.manager.save(personalPersona), 
-                queryRunner.manager.save(vericodeInsert)
+                queryRunner.manager.save(vericodeInsert), 
+                queryRunner.commitTransaction()
             ]);
 
-            await queryRunner.commitTransaction();
 
 
 
