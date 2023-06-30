@@ -71,5 +71,20 @@ export class AuthService {
     }
 
 
+    async createNewAccount({
+        account_name, 
+        username, 
+        password, 
+        personal_username, 
+        dob, 
+        email, 
+        vericode
+    }){
+
+
+
+    }
+
+
 
 }

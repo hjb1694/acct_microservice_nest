@@ -33,6 +33,13 @@ export default class User {
     accountName: string;
 
     @Column({
+        name: 'dob', 
+        type: 'date',
+        nullable: false
+    })
+    dob: string;
+
+    @Column({
         name: 'email', 
         nullable: false
     })
