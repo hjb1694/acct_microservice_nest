@@ -1,0 +1,9 @@
+POST "http://localhost:3000/auth/register"
+Content-Type: application/json
+
+{
+    "account_name": "my_account", 
+    "password": "myPassword123", 
+    "email": "me@haydenbradfield.com", 
+    "dob": "1994-09-16"
+}
