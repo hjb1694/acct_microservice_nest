@@ -33,10 +33,7 @@ export class AuthController {
 
         const newAcctData = await this.authService.prepareNewAccountData(body);
 
-        
-
-
-
+        await this.authService.createNewAccount(newAcctData);
 
 
     }

@@ -20,7 +20,7 @@ export enum AccountStatus {
 }
 
 @Entity()
-export default class User {
+export default class Account {
 
     @PrimaryGeneratedColumn()
     id: number;

@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import User from "./User.entity";
+import User from "./Account.entity";
 
 export enum PersonaType {
     PERSONAL = 'PERSONAL', 

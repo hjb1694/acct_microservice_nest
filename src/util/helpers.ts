@@ -1,5 +1,5 @@
-import bcrypt from 'bcrypt';
-import randomString from 'randomstring';
+import * as bcrypt from 'bcrypt';
+import * as randomString from 'randomstring';
 
 export async function hashPassword(rawPassword: string){
 
