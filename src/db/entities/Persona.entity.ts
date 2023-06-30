@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import User from "./Account.entity";
+import Account from "./Account.entity";
 
 export enum PersonaType {
     PERSONAL = 'PERSONAL', 
@@ -34,7 +34,7 @@ export default class Persona {
     })
     personaUsername: string;
 
-    @ManyToOne(() => User, (user) => user.personas)
-    user: User;
+    @ManyToOne(() => Account, (user) => user.personas)
+    user: Account;
 
 }
