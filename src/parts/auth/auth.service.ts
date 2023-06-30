@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import Persona from 'src/db/entities/Persona.entity';
+import Persona, { PersonaType } from 'src/db/entities/Persona.entity';
 import User from 'src/db/entities/User.entity';
 import { Repository, DataSource } from 'typeorm';
 import { RegisterDto } from './dto/register.dto';
@@ -72,8 +72,7 @@ export class AuthService {
 
 
     async createNewAccount({
-        account_name, 
-        username, 
+        account_name,  
         password, 
         personal_username, 
         dob, 
@@ -81,7 +80,35 @@ export class AuthService {
         vericode
     }){
 
+        const queryRunner = this.dataSource.createQueryRunner();
 
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        try{
+
+            const user = new User();
+            user.accountName = account_name;
+            user.dob = dob;
+            user.email = email;
+
+            const userRecord = await queryRunner.manager.save(User);
+
+            console.log(userRecord)
+
+            // const personalPersona = new Persona();
+            // personalPersona.personaType = PersonaType.PERSONAL;
+            // personalPersona.personaUsername = personal_username;
+
+            await queryRunner.commitTransaction();
+
+
+
+        }catch(e){
+            await queryRunner.rollbackTransaction();
+        }finally{
+            await queryRunner.release();
+        }
 
     }
 
