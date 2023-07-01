@@ -5,7 +5,7 @@ import Account from 'src/db/entities/Account.entity';
 import { Repository, DataSource } from 'typeorm';
 import { RegisterDto } from './dto/register.dto';
 import Vericode from 'src/db/entities/Vericode.entity';
-import PersonalPersonaProfile from 'src/db/entities/PersonalPersonaProfile';
+import PersonalPersonaProfile from 'src/db/entities/PersonalPersonaProfile.entity';
 import { HelperService } from 'src/util/helpers.service';
 
 @Injectable()
@@ -16,6 +16,8 @@ export class AuthService {
         private userRepo: Repository<Account>,
         @InjectRepository(Persona)
         private personaRepo: Repository<Persona>,
+        @InjectRepository(PersonalPersonaProfile)
+        private personalPersonaProfile: Repository<PersonalPersonaProfile>,
         @InjectDataSource() 
         private dataSource: DataSource, 
         private helperService: HelperService
@@ -107,13 +109,13 @@ export class AuthService {
             vericodeInsert.userId = userRecord.id;
             vericodeInsert.vericode = vericode;
 
-            const personalPersonaProfile = new PersonalPersonaProfile();
-            personalPersonaProfile.userId = userRecord.id;
+            const personalPersonaProfileInsert = new PersonalPersonaProfile();
+            personalPersonaProfileInsert.userId = userRecord.id;
 
             await Promise.all([
                 queryRunner.manager.save(personalPersona), 
                 queryRunner.manager.save(vericodeInsert), 
-                queryRunner.manager.save(personalPersonaProfile),
+                queryRunner.manager.save(personalPersonaProfileInsert),
                 queryRunner.commitTransaction()
             ]);
 

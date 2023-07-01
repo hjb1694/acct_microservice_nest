@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import Account from 'src/db/entities/Account.entity';
 import Persona from 'src/db/entities/Persona.entity';
 import Vericode from 'src/db/entities/Vericode.entity';
-import PersonalPersonaProfile from 'src/db/entities/PersonalPersonaProfile';
+import PersonalPersonaProfile from 'src/db/entities/PersonalPersonaProfile.entity';
 
 @Module({
   imports: [
