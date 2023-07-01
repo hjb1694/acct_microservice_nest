@@ -4,9 +4,9 @@ import Persona, { PersonaType } from 'src/db/entities/Persona.entity';
 import Account from 'src/db/entities/Account.entity';
 import { Repository, DataSource } from 'typeorm';
 import { RegisterDto } from './dto/register.dto';
-import { genVericode, hashPassword } from 'src/util/helpers';
 import Vericode from 'src/db/entities/Vericode.entity';
 import PersonalPersonaProfile from 'src/db/entities/PersonalPersonaProfile';
+import { HelperService } from 'src/util/helpers.service';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +17,8 @@ export class AuthService {
         @InjectRepository(Persona)
         private personaRepo: Repository<Persona>,
         @InjectDataSource() 
-        private dataSource: DataSource
+        private dataSource: DataSource, 
+        private helperService: HelperService
     ){}
 
 
@@ -61,8 +62,8 @@ export class AuthService {
 
     async prepareNewAccountData(body: RegisterDto){
 
-        const hashedPassword = await hashPassword(body.password);
-        const vericode = genVericode();
+        const hashedPassword = await this.helperService.hashPassword(body.password);
+        const vericode = this.helperService.genVericode();
 
         return {
             ...body, 
