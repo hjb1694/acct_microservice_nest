@@ -2,12 +2,14 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { AccountNameAlreadyExistsException, AccountAlreadyExistsException, UsernameAlreadyExistsException } from 'src/util/custom_errors';
+import { EmailService } from 'src/util/email.service';
 
 @Controller('auth')
 export class AuthController {
 
     constructor(
-        private authService: AuthService
+        private authService: AuthService, 
+        private emailService: EmailService
     ){}
 
     @Post('/register')
@@ -34,6 +36,7 @@ export class AuthController {
         const newAcctData = await this.authService.prepareNewAccountData(body);
 
         await this.authService.createNewAccount(newAcctData);
+        this.emailService.send();
 
 
     }

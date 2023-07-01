@@ -8,7 +8,9 @@ import Vericode from 'src/db/entities/Vericode.entity';
 import PersonalPersonaProfile from 'src/db/entities/PersonalPersonaProfile';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Account, Persona, Vericode, PersonalPersonaProfile])],
+  imports: [
+    TypeOrmModule.forFeature([Account, Persona, Vericode, PersonalPersonaProfile])
+  ],
   controllers: [AuthController],
   providers: [AuthService]
 })
