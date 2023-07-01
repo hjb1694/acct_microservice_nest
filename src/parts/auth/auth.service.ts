@@ -6,6 +6,7 @@ import { Repository, DataSource } from 'typeorm';
 import { RegisterDto } from './dto/register.dto';
 import { genVericode, hashPassword } from 'src/util/helpers';
 import Vericode from 'src/db/entities/Vericode.entity';
+import PersonalPersonaProfile from 'src/db/entities/PersonalPersonaProfile';
 
 @Injectable()
 export class AuthService {
@@ -105,9 +106,13 @@ export class AuthService {
             vericodeInsert.userId = userRecord.id;
             vericodeInsert.vericode = vericode;
 
+            const personalPersonaProfile = new PersonalPersonaProfile();
+            personalPersonaProfile.userId = userRecord.id;
+
             await Promise.all([
                 queryRunner.manager.save(personalPersona), 
                 queryRunner.manager.save(vericodeInsert), 
+                queryRunner.manager.save(personalPersonaProfile),
                 queryRunner.commitTransaction()
             ]);
 
