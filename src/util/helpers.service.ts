@@ -16,7 +16,7 @@ export class HelperService {
     
     }
 
-    async genVericode(){
+    genVericode(){
 
         return randomString.generate({length: 150});
     

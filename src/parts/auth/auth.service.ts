@@ -116,8 +116,9 @@ export class AuthService {
                 queryRunner.manager.save(personalPersona), 
                 queryRunner.manager.save(vericodeInsert), 
                 queryRunner.manager.save(personalPersonaProfileInsert),
-                queryRunner.commitTransaction()
             ]);
+
+            await queryRunner.commitTransaction();
 
 
 
