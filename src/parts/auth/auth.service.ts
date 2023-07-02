@@ -7,6 +7,8 @@ import { RegisterDto } from './dto/register.dto';
 import Vericode from 'src/db/entities/Vericode.entity';
 import PersonalPersonaProfile from 'src/db/entities/PersonalPersonaProfile.entity';
 import { HelperService } from 'src/util/helpers.service';
+import { EmailService } from 'src/util/email.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +22,9 @@ export class AuthService {
         private personalPersonaProfile: Repository<PersonalPersonaProfile>,
         @InjectDataSource() 
         private dataSource: DataSource, 
-        private helperService: HelperService
+        private helperService: HelperService, 
+        private emailService: EmailService, 
+        private configService: ConfigService
     ){}
 
 
@@ -133,5 +137,12 @@ export class AuthService {
     }
 
 
+    async sendVerificationEmail(to: string, account_name: string, vericode: string){
+
+        await this.emailService.send(to, 'Verify Your New Account',`
+        <p>Please click here to verify your new account:</p>
+        <p><a href="">${this.configService.get('WEBSITE_URL')}/auth/verify?account=${account_name}&code=${vericode}</a></p>
+        `);
+    }
 
 }
