@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne } from 'typeorm';
 import Persona from './Persona.entity';
 import Vericode from './Vericode.entity';
+import PersonalPersonaProfile from './PersonalPersonaProfile.entity';
 
 export enum UserRole {
     SYSTEM = 'SYSTEM',
@@ -76,4 +77,6 @@ export default class Account {
     @OneToMany(() => Vericode, (vericode) => vericode.user)
     vericodes: Vericode[]
 
+    @OneToOne(() => PersonalPersonaProfile, (profile) => profile.user)
+    personalPersonaProfile: PersonalPersonaProfile
 }

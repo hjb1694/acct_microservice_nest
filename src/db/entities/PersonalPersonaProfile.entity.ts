@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from "typeorm";
+import Account from "./Account.entity";
 
 export enum Gender {
     MALE = 'MALE', 
@@ -68,4 +69,10 @@ export default class PersonalPersonaProfile {
         nullable: true
     })
     locationText: string;
+
+    @OneToOne(() => Account, (account) => account.personalPersonaProfile)
+    @JoinColumn({
+        name: 'user_id'
+    })
+    user: Account;
 }
