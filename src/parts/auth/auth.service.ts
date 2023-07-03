@@ -156,6 +156,8 @@ export class AuthService {
             'account'
         )
         .where('vericode.vericode = :vericode AND account.account_name = :account_name', {vericode, account_name})
+        .orderBy('vericode.generated_at', 'DESC')
+        .limit(1)
         .getOne();
 
         if(!data){
