@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
 import Account from "./Account.entity";
 
 export enum PersonaType {
@@ -14,7 +14,7 @@ export default class Persona {
 
     @Column({
         name: 'user_id',
-        type: 'int', 
+        type: 'int',
         nullable: false
     })
     userId: number;
@@ -35,6 +35,9 @@ export default class Persona {
     personaUsername: string;
 
     @ManyToOne(() => Account, (user) => user.personas)
+    @JoinColumn({
+        name: 'user_id'
+    })
     user: Account;
 
 }

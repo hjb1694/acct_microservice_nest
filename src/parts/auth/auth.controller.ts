@@ -3,6 +3,7 @@ import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { AccountNameAlreadyExistsException, AccountAlreadyExistsException, UsernameAlreadyExistsException } from 'src/util/custom_errors';
 import { EmailService } from 'src/util/email.service';
+import { AccountVerifyDto } from './dto/verify.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -48,6 +49,31 @@ export class AuthController {
             }
         }
 
+    }
+
+
+    @Post('/verify')
+    async verify(@Body() body: AccountVerifyDto) {
+        // const {isMatching, isExpired} = await this.authService.checkVericode(body.account_name, body.vericode);
+        const {isResult, isMatching, isExpired} = await this.authService.checkVericode(body.account_name, body.vericode);
+
+        if(!isResult || !isMatching){
+            return {
+                success: false, 
+                error_reason: 'Invalid input'
+            }
+        }
+
+        if(isExpired){
+            return {
+                success: false, 
+                error_reason: "Expired"
+            }
+        }
+
+        return {
+            success: true
+        };
     }
     
 }

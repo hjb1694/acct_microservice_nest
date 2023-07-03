@@ -9,6 +9,7 @@ import PersonalPersonaProfile from 'src/db/entities/PersonalPersonaProfile.entit
 import { HelperService } from 'src/util/helpers.service';
 import { EmailService } from 'src/util/email.service';
 import { ConfigService } from '@nestjs/config';
+import { DateTime } from 'luxon';
 
 @Injectable()
 export class AuthService {
@@ -143,6 +144,37 @@ export class AuthService {
         <p>Please click here to verify your new account:</p>
         <p><a href="">${this.configService.get('WEBSITE_URL')}/auth/verify?account=${account_name}&code=${vericode}</a></p>
         `);
+    }
+
+    async checkVericode(account_name: string, vericode: string){
+
+        const data = await this.dataSource
+        .getRepository(Vericode)
+        .createQueryBuilder('vericode')
+        .innerJoinAndSelect(
+            'vericode.user', 
+            'account'
+        )
+        .where('vericode.vericode = :vericode AND account.account_name = :account_name', {vericode, account_name})
+        .getOne();
+
+        if(!data){
+            return {
+                isResult: false,
+                isMatching: false, 
+                isExpired: false
+            }
+        }
+
+        const date = DateTime.fromISO(data.generatedAt);
+        const now = DateTime.now();
+
+        return {
+            isResult: true,
+            isMatching: vericode === data.vericode, 
+            isExpired: now.diff(date, 'days').toObject().days >= 1
+        };
+
     }
 
 }

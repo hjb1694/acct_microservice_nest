@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
+import Account from "./Account.entity";
 
 
 @Entity()
@@ -28,4 +29,11 @@ export default class Vericode {
         default: () => 'CURRENT_TIMESTAMP'
     })
     generatedAt: string;
+
+    @ManyToOne(() => Account, (user) => user.vericodes)
+    @JoinColumn({
+        name: 'user_id'
+    })
+    user: Account
+
 }
