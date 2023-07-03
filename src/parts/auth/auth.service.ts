@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import Persona, { PersonaType } from 'src/db/entities/Persona.entity';
-import Account from 'src/db/entities/Account.entity';
+import Account, { AccountStatus } from 'src/db/entities/Account.entity';
 import { Repository, DataSource } from 'typeorm';
 import { RegisterDto } from './dto/register.dto';
 import Vericode from 'src/db/entities/Vericode.entity';
@@ -148,7 +148,7 @@ export class AuthService {
 
     async checkVericode(account_name: string, vericode: string){
 
-        const data = await this.dataSource
+        const data: any = await this.dataSource
         .getRepository(Vericode)
         .createQueryBuilder('vericode')
         .innerJoinAndSelect(
@@ -162,7 +162,8 @@ export class AuthService {
             return {
                 isResult: false,
                 isMatching: false, 
-                isExpired: false
+                isExpired: false, 
+                userId: null
             }
         }
 
@@ -172,9 +173,20 @@ export class AuthService {
         return {
             isResult: true,
             isMatching: vericode === data.vericode, 
-            isExpired: now.diff(date, 'days').toObject().days >= 1
+            isExpired: now.diff(date, 'days').toObject().days >= 1, 
+            userId: data.account_id
         };
 
+    }
+
+    async changeAccountStatus(account_id: number, status: AccountStatus){
+        await this.dataSource
+        .getRepository(Account)
+        .createQueryBuilder('account')
+        .update(Account)
+        .set({accountStatus: AccountStatus.ACTIVE})
+        .where('id = :id', {id: account_id})
+        .execute();
     }
 
 }

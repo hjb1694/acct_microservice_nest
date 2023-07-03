@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { AccountNameAlreadyExistsException, AccountAlreadyExistsException, UsernameAlreadyExistsException } from 'src/util/custom_errors';
 import { EmailService } from 'src/util/email.service';
 import { AccountVerifyDto } from './dto/verify.dto';
+import { AccountStatus } from 'src/db/entities/Account.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -55,7 +56,7 @@ export class AuthController {
     @Post('/verify')
     async verify(@Body() body: AccountVerifyDto) {
         // const {isMatching, isExpired} = await this.authService.checkVericode(body.account_name, body.vericode);
-        const {isResult, isMatching, isExpired} = await this.authService.checkVericode(body.account_name, body.vericode);
+        const {isResult, isMatching, isExpired, userId} = await this.authService.checkVericode(body.account_name, body.vericode);
 
         if(!isResult || !isMatching){
             return {
@@ -70,6 +71,8 @@ export class AuthController {
                 error_reason: "Expired"
             }
         }
+
+        await this.authService.changeAccountStatus(userId, AccountStatus.ACTIVE);
 
         return {
             success: true
