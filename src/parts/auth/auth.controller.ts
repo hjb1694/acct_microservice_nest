@@ -34,14 +34,18 @@ export class AuthController {
 
         const newAcctData = await this.authService.prepareNewAccountData(body);
 
-        await Promise.all([
+        const [userId] = await Promise.all([
             this.authService.createNewAccount(newAcctData),
             this.authService.sendVerificationEmail(body.email, body.account_name, newAcctData.vericode)
         ]);
 
         return {
             status: 201, 
-            message: 'SUCCESS!'
+            message: 'SUCCESS!', 
+            body: {
+                user_id: userId, 
+                vericode: newAcctData.vericode
+            }
         }
 
     }

@@ -124,7 +124,7 @@ export class AuthService {
 
             await queryRunner.commitTransaction();
 
-
+            return userRecord.id;
 
 
         }catch(e){
