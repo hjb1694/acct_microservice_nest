@@ -174,17 +174,18 @@ export class AuthService {
             isResult: true,
             isMatching: vericode === data.vericode, 
             isExpired: now.diff(date, 'days').toObject().days >= 1, 
-            userId: data.account_id
+            userId: data.user.id
         };
 
     }
 
     async changeAccountStatus(account_id: number, status: AccountStatus){
+
         await this.dataSource
         .getRepository(Account)
         .createQueryBuilder('account')
         .update(Account)
-        .set({accountStatus: AccountStatus.ACTIVE})
+        .set({accountStatus: status})
         .where('id = :id', {id: account_id})
         .execute();
     }
