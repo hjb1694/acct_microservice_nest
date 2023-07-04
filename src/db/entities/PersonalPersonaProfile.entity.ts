@@ -70,6 +70,14 @@ export default class PersonalPersonaProfile {
     })
     locationText: string;
 
+
+    @Column({
+        type: 'varchar', 
+        name: 'profile_image_uri', 
+        nullable: true
+    })
+    profileImageURI: string;
+
     @OneToOne(() => Account, (account) => account.personalPersonaProfile)
     @JoinColumn({
         name: 'user_id'
