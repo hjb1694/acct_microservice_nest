@@ -28,6 +28,7 @@ export class EmailService {
         await transporter.sendMail({
             from: '"Ktown Portal Noreply" <no-reply@ktown-portal.com>', 
             to, 
+            subject,
             html: content
         });
     }

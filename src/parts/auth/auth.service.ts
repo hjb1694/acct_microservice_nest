@@ -206,7 +206,7 @@ export class AuthService {
         .select()
         .where('email = :email', {email})
         .andWhere('user_role != :role', {role: UserRole.SYSTEM})
-        .orderBy('id', 'DESC')
+        .orderBy('created_at', 'DESC')
         .limit(1)
         .getOne();
 
@@ -221,6 +221,44 @@ export class AuthService {
             userId: data.id, 
             account_status: data.accountStatus, 
             role: data.userRole
+        }
+
+
+    }
+
+
+    async resetPassword(email: string) {
+
+        const randomPass = this.helperService.genRandomPassword();
+        const hashedPassword = await this.helperService.hashPassword(randomPass);
+
+        const user = await this.dataSource
+        .getRepository(Account)
+        .createQueryBuilder('account')
+        .select()
+        .where('email = :email', {email})
+        .andWhere('account_status NOT IN (...:account_status)', [AccountStatus.BANNED, AccountStatus.DEACTIVATED_BY_USER])
+        .orderBy('created_at','DESC')
+        .limit(1)
+        .getOne();
+
+        if(user){
+
+            await Promise.all([
+            this.dataSource
+            .getRepository(Account)
+            .createQueryBuilder('account')
+            .update(Account)
+            .set({password: hashedPassword})
+            .where('id = "userId', {id: user.id})
+            .execute(), 
+            this.emailService.send(email, 'Reset Password', `
+            <p>Your new password is:</p>
+            <p>${randomPass}</p>
+            <p>Login with the password above to change your password.</p>
+            `)
+            ]);
+
         }
 
 

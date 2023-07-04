@@ -22,6 +22,12 @@ export class HelperService {
     
     }
 
+    genRandomPassword(){
+
+        return randomString.generate({length: 15});
+
+    }
+
     async passwordMatches(rawPassword: string, hashedPassword: string){
 
         const matches = await bcrypt.compare(rawPassword, hashedPassword)

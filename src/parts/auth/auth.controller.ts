@@ -5,6 +5,7 @@ import { AccountNameAlreadyExistsException, AccountAlreadyExistsException, Usern
 import { AccountVerifyDto } from './dto/verify.dto';
 import { AccountStatus } from 'src/db/entities/Account.entity';
 import { LoginDto } from './dto/login.dto';
+import { ForgotPasswordDto } from './dto/forgot_password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -90,6 +91,15 @@ export class AuthController {
         }
 
         return user;
+
+    }
+
+    @Post('/forgot-password')
+    async forgotPassword(@Body() body: ForgotPasswordDto) {
+
+        await this.authService.resetPassword(body.email);
+
+        return true;
 
     }
     
