@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne } from 'typ
 import Persona from './Persona.entity';
 import Vericode from './Vericode.entity';
 import PersonalPersonaProfile from './PersonalPersonaProfile.entity';
+import { UserPoints } from './UserPoints.entity';
 
 export enum UserRole {
     SYSTEM = 'SYSTEM',
@@ -96,4 +97,7 @@ export default class Account {
 
     @OneToOne(() => PersonalPersonaProfile, (profile) => profile.user)
     personalPersonaProfile: PersonalPersonaProfile
+
+    @OneToOne(() => UserPoints, (userPoints) => userPoints.user)
+    userPoints: UserPoints
 }

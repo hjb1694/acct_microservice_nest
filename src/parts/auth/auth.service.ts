@@ -10,6 +10,7 @@ import { HelperService } from 'src/util/helpers.service';
 import { EmailService } from 'src/util/email.service';
 import { ConfigService } from '@nestjs/config';
 import { DateTime } from 'luxon';
+import { UserPoints } from 'src/db/entities/UserPoints.entity';
 
 export enum LoginFailureReasons {
     INVALID_CREDENTIALS, 
@@ -122,10 +123,14 @@ export class AuthService {
             const personalPersonaProfileInsert = new PersonalPersonaProfile();
             personalPersonaProfileInsert.userId = userRecord.id;
 
+            const userPointsRecordInsert = new UserPoints();
+            userPointsRecordInsert.userId = userRecord.id;
+
             await Promise.all([
                 queryRunner.manager.save(personalPersona), 
                 queryRunner.manager.save(vericodeInsert), 
                 queryRunner.manager.save(personalPersonaProfileInsert),
+                queryRunner.manager.save(userPointsRecordInsert)
             ]);
 
             await queryRunner.commitTransaction();
@@ -192,7 +197,10 @@ export class AuthService {
         .getRepository(Account)
         .createQueryBuilder('account')
         .update(Account)
-        .set({accountStatus: status})
+        .set({
+            accountStatus: status, 
+            updatedAt: () => 'CURRENT_TIMESTAMP'
+        })
         .where('id = :id', {id: account_id})
         .execute();
     }
