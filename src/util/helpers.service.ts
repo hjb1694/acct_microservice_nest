@@ -22,5 +22,13 @@ export class HelperService {
     
     }
 
+    async passwordMatches(rawPassword: string, hashedPassword: string){
+
+        const matches = await bcrypt.compare(rawPassword, hashedPassword)
+
+        return matches;
+
+    }
+
 
 }

@@ -71,6 +71,23 @@ export default class Account {
     })
     accountStatus: AccountStatus
 
+    @Column({
+        name: 'created_at', 
+        type: 'timestamp',
+        default: () => 'CURRENT_TIMESTAMP', 
+        nullable: false
+    })
+    createdAt: string;
+
+
+    @Column({
+        name: 'updated_at', 
+        type: 'timestamp', 
+        default: () => 'CURRENT_TIMESTAMP', 
+        nullable: false
+    })
+    updatedAt: string;
+
     @OneToMany(() => Persona, (persona) => persona.user)
     personas: Persona[]
 

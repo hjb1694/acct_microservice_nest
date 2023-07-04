@@ -1,10 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { AccountNameAlreadyExistsException, AccountAlreadyExistsException, UsernameAlreadyExistsException } from 'src/util/custom_errors';
-import { EmailService } from 'src/util/email.service';
 import { AccountVerifyDto } from './dto/verify.dto';
 import { AccountStatus } from 'src/db/entities/Account.entity';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -77,6 +77,20 @@ export class AuthController {
         return {
             success: true
         };
+    }
+
+
+    @Post('/login')
+    async login(@Body() body: LoginDto) {
+
+        const user = await this.authService.login(body.email, body.password);
+
+        if(!user){
+            throw new UnauthorizedException();
+        }
+
+        return user;
+
     }
     
 }

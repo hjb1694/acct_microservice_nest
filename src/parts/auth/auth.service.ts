@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import Persona, { PersonaType } from 'src/db/entities/Persona.entity';
-import Account, { AccountStatus } from 'src/db/entities/Account.entity';
+import Account, { AccountStatus, UserRole } from 'src/db/entities/Account.entity';
 import { Repository, DataSource } from 'typeorm';
 import { RegisterDto } from './dto/register.dto';
 import Vericode from 'src/db/entities/Vericode.entity';
@@ -10,6 +10,11 @@ import { HelperService } from 'src/util/helpers.service';
 import { EmailService } from 'src/util/email.service';
 import { ConfigService } from '@nestjs/config';
 import { DateTime } from 'luxon';
+
+export enum LoginFailureReasons {
+    INVALID_CREDENTIALS, 
+    NO_LONGER_EXISTS
+}
 
 @Injectable()
 export class AuthService {
@@ -191,5 +196,35 @@ export class AuthService {
         .where('id = :id', {id: account_id})
         .execute();
     }
+
+
+    async login(email: string, password: string){
+
+        const data = await this.dataSource
+        .getRepository(Account)
+        .createQueryBuilder('account')
+        .select()
+        .where('email = :email', {email})
+        .andWhere('user_role != :role', {role: UserRole.SYSTEM})
+        .orderBy('id', 'DESC')
+        .limit(1)
+        .getOne();
+
+        if(!data) return false;
+        if([AccountStatus.BANNED, AccountStatus.DEACTIVATED_BY_USER].includes(data.accountStatus)) return false;
+
+        const isMatchingPassword = await this.helperService.passwordMatches(password, data.password);
+
+        if(!isMatchingPassword) return false;
+
+        return {
+            userId: data.id, 
+            account_status: data.accountStatus, 
+            role: data.userRole
+        }
+
+
+    }
+
 
 }
