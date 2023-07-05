@@ -7,6 +7,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DatabaseConfiguration } from './db/database.config';
 import { GlobalModule } from './util/global.module';
 import { UserPointsModule } from './parts/user_points/user_points.module';
+import { APIKeyGuard } from './guards/api_key.guard';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -21,6 +23,12 @@ import { UserPointsModule } from './parts/user_points/user_points.module';
     }), GlobalModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService, 
+    {
+      provide: APP_GUARD, 
+      useClass: APIKeyGuard
+    }
+  ],
 })
 export class AppModule {}
