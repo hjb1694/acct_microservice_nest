@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
+import { Body, Controller, Post, UnauthorizedException, Patch } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { AccountNameAlreadyExistsException, AccountAlreadyExistsException, UsernameAlreadyExistsException } from 'src/util/custom_errors';
@@ -6,6 +6,7 @@ import { AccountVerifyDto } from './dto/verify.dto';
 import { AccountStatus } from 'src/db/entities/Account.entity';
 import { LoginDto } from './dto/login.dto';
 import { ForgotPasswordDto } from './dto/forgot_password.dto';
+import { VericodeResendDto } from './dto/vericode_resend.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -94,12 +95,19 @@ export class AuthController {
 
     }
 
-    @Post('/forgot-password')
+    @Patch('/forgot-password')
     async forgotPassword(@Body() body: ForgotPasswordDto) {
 
         await this.authService.resetPassword(body.email);
 
         return true;
+
+    }
+
+    @Post('/resend-verification')
+    async resendVerificationCode(@Body() body: VericodeResendDto){
+
+
 
     }
     
