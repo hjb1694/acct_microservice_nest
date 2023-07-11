@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import Persona, { PersonaType } from 'src/db/entities/Persona.entity';
-import Account, { AccountStatus, UserRole } from 'src/db/entities/Account.entity';
-import { Repository, DataSource } from 'typeorm';
+import Account, { AccountStatus, AccountType, UserRole } from 'src/db/entities/Account.entity';
+import { DataSource } from 'typeorm';
 import { RegisterDto } from './dto/register.dto';
 import Vericode from 'src/db/entities/Vericode.entity';
-import PersonalPersonaProfile from 'src/db/entities/PersonalPersonaProfile.entity';
+import PersonalProfile from 'src/db/entities/PersonalProfile.entity';
 import { HelperService } from 'src/util/helpers.service';
 import { EmailService } from 'src/util/email.service';
 import { ConfigService } from '@nestjs/config';
@@ -21,12 +20,6 @@ export enum LoginFailureReasons {
 export class AuthService {
     
     constructor(
-        @InjectRepository(Account)
-        private userRepo: Repository<Account>,
-        @InjectRepository(Persona)
-        private personaRepo: Repository<Persona>,
-        @InjectRepository(PersonalPersonaProfile)
-        private personalPersonaProfile: Repository<PersonalPersonaProfile>,
         @InjectDataSource() 
         private dataSource: DataSource, 
         private helperService: HelperService, 
@@ -61,18 +54,6 @@ export class AuthService {
 
     }
 
-    async personaUsernameExists(username: string){
-
-        const count = await this.dataSource
-        .getRepository(Persona)
-        .createQueryBuilder('persona')
-        .where('persona_username = :username', {username})
-        .getCount();
-
-        return !!count;
-
-    }
-
     async prepareNewAccountData(body: RegisterDto){
 
         const hashedPassword = await this.helperService.hashPassword(body.password);
@@ -90,7 +71,7 @@ export class AuthService {
     async createNewAccount({
         account_name,  
         password, 
-        personal_username, 
+        account_type, 
         dob, 
         email, 
         vericode
@@ -111,28 +92,27 @@ export class AuthService {
 
             const userRecord = await queryRunner.manager.save(user);
 
-            const personalPersona = new Persona();
-            personalPersona.personaType = PersonaType.PERSONAL;
-            personalPersona.personaUsername = personal_username;
-            personalPersona.userId = userRecord.id;
 
             const vericodeInsert = new Vericode();
             vericodeInsert.userId = userRecord.id;
             vericodeInsert.vericode = vericode;
 
-            const personalPersonaProfileInsert = new PersonalPersonaProfile();
-            personalPersonaProfileInsert.userId = userRecord.id;
+            
+            if(account_type === AccountType.PERSONAL){
+                const personalProfileInsert = new PersonalProfile();
+                personalProfileInsert.userId = userRecord.id;
 
-            const userPointsRecordInsert = new UserPoints();
-            userPointsRecordInsert.userId = userRecord.id;
+                const userPointsRecordInsert = new UserPoints();
+                userPointsRecordInsert.userId = userRecord.id;
 
-            await Promise.all([
-                queryRunner.manager.save(personalPersona), 
-                queryRunner.manager.save(vericodeInsert), 
-                queryRunner.manager.save(personalPersonaProfileInsert),
-                queryRunner.manager.save(userPointsRecordInsert)
-            ]);
+                await Promise.all([
+                    queryRunner.manager.save(personalProfileInsert),
+                    queryRunner.manager.save(userPointsRecordInsert)
+                ]);
+            }
 
+            await queryRunner.manager.save(vericodeInsert), 
+        
             await queryRunner.commitTransaction();
 
             return userRecord.id;

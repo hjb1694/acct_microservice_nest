@@ -1,7 +1,7 @@
 import { Body, Controller, Post, UnauthorizedException, Patch } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
-import { AccountNameAlreadyExistsException, AccountAlreadyExistsException, UsernameAlreadyExistsException } from 'src/util/custom_errors';
+import { AccountNameAlreadyExistsException, AccountAlreadyExistsException } from 'src/util/custom_errors';
 import { AccountVerifyDto } from './dto/verify.dto';
 import { AccountStatus } from 'src/db/entities/Account.entity';
 import { LoginDto } from './dto/login.dto';
@@ -30,11 +30,6 @@ export class AuthController {
             throw new AccountAlreadyExistsException();
         }
 
-        const personaUsernameExists = await this.authService.personaUsernameExists(body.personal_username);
-
-        if(personaUsernameExists){
-            throw new UsernameAlreadyExistsException();
-        }
 
         const newAcctData = await this.authService.prepareNewAccountData(body);
 

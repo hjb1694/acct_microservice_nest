@@ -1,7 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne } from 'typeorm';
-import Persona from './Persona.entity';
 import Vericode from './Vericode.entity';
-import PersonalPersonaProfile from './PersonalPersonaProfile.entity';
+import PersonalProfile from './PersonalProfile.entity';
 import { UserPoints } from './UserPoints.entity';
 
 export enum UserRole {
@@ -22,6 +21,11 @@ export enum AccountStatus {
     DEACTIVATED_BY_USER = 'DEACTIVATED_BY_USER'
 }
 
+export enum AccountType {
+    PERSONAL = 'PERSONAL', 
+    PROFESSIONAL = 'PROFESSIONAL'
+}
+
 @Entity()
 export default class Account {
 
@@ -34,6 +38,14 @@ export default class Account {
         nullable: false
     })
     accountName: string;
+
+    @Column({
+        name: 'account_type', 
+        type: 'enum', 
+        enum: AccountType, 
+        nullable: false
+    })
+    accountType: AccountType;
 
     @Column({
         name: 'dob', 
@@ -89,14 +101,11 @@ export default class Account {
     })
     updatedAt: string;
 
-    @OneToMany(() => Persona, (persona) => persona.user)
-    personas: Persona[]
-
     @OneToMany(() => Vericode, (vericode) => vericode.user)
     vericodes: Vericode[]
 
-    @OneToOne(() => PersonalPersonaProfile, (profile) => profile.user)
-    personalPersonaProfile: PersonalPersonaProfile
+    @OneToOne(() => PersonalProfile, (profile) => profile.user)
+    personalPersonaProfile: PersonalProfile
 
     @OneToOne(() => UserPoints, (userPoints) => userPoints.user)
     userPoints: UserPoints

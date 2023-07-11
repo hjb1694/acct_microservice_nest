@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsIn, IsNotEmpty, IsString } from 'class-validator';
 import { CustomValidNewPassword, CustomValidUsername, CustomIsValidDate, CustomIsValidDOBAge } from '../../../util/custom_validators';
 
 export class RegisterDto {
@@ -25,7 +25,7 @@ export class RegisterDto {
     dob: string;
 
     @IsNotEmpty()
-    @CustomValidUsername()
-    personal_username: string;
+    @IsIn(['PERSONAL', 'PROFESSIONAL'])
+    account_type: string;
 
 }
