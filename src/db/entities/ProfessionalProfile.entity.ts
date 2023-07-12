@@ -14,11 +14,39 @@ export class ProfessionalProfile {
     userId: number;
 
     @Column({
+        name: 'first_name', 
+        type: 'varchar', 
+        nullable: true
+    })
+    firstName: string;
+
+    @Column({
+        name: 'last_name', 
+        type: 'varchar', 
+        nullable: true
+    })
+    lastName: string;
+
+    @Column({
         name: 'bio', 
         type: 'text', 
         nullable: true
     })
     bio: string;
+
+    @Column({
+        type: 'varchar', 
+        name: 'location_zip', 
+        nullable: true
+    })
+    locationZip: string;
+
+    @Column({
+        type: 'varchar', 
+        name: 'location_text', 
+        nullable: true
+    })
+    locationText: string;
 
 
     @Column({
