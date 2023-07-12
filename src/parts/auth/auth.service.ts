@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 import Account, { AccountStatus, AccountType, UserRole } from 'src/db/entities/Account.entity';
 import { DataSource } from 'typeorm';
 import { RegisterDto } from './dto/register.dto';
@@ -86,6 +86,7 @@ export class AuthService {
 
             const user = new Account();
             user.accountName = account_name;
+            user.accountType = account_type;
             user.dob = dob;
             user.email = email;
             user.password = password;

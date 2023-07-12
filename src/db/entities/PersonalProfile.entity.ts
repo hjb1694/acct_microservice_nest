@@ -25,7 +25,7 @@ export default class PersonalPersonaProfile {
     id: number;
 
     @Column({
-        type: 'varchar',
+        type: 'int',
         name: 'user_id', 
         nullable: false
     })
