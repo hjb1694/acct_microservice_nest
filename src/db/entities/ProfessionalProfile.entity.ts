@@ -28,6 +28,13 @@ export class ProfessionalProfile {
     lastName: string;
 
     @Column({
+        name: 'headline', 
+        type: 'varchar', 
+        nullable: true
+    })
+    headline: string;
+
+    @Column({
         name: 'bio', 
         type: 'text', 
         nullable: true
