@@ -25,8 +25,8 @@ export function CustomValidUsername(validationOptions: ValidationOptions = {mess
 
                     return (
                         typeof value === 'string' &&
-                        stringLength(value) > 8 &&
-                        stringLength(value) <= 15 &&
+                        stringLength(value) >= 6 &&
+                        stringLength(value) <= 12 &&
                         regs.test(value)
                     );
                 }
@@ -55,7 +55,7 @@ export function CustomValidNewPassword(validationOptions: ValidationOptions = {m
                     return (
                         typeof value === 'string' &&
                         stringLength(value) > 8 &&
-                        stringLength(value) <= 15 &&
+                        stringLength(value) <= 100 &&
                         regs.uppercase.test(value) &&
                         regs.lowercase.test(value) &&
                         regs.numeric.test(value)
