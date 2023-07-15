@@ -99,7 +99,7 @@ export class AuthService {
             vericodeInsert.vericode = vericode;
 
             
-            if(account_type === AccountType.PERSONAL){
+            if(account_type === AccountType.REGULAR){
                 const personalProfileInsert = new PersonalProfile();
                 personalProfileInsert.userId = userRecord.id;
 

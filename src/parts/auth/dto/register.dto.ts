@@ -25,7 +25,7 @@ export class RegisterDto {
     dob: string;
 
     @IsNotEmpty()
-    @IsIn(['PERSONAL', 'PROFESSIONAL'])
+    @IsIn(['REGULAR', 'BUSINESS'])
     account_type: string;
 
 }

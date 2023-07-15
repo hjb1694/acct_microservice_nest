@@ -22,8 +22,9 @@ export enum AccountStatus {
 }
 
 export enum AccountType {
-    PERSONAL = 'PERSONAL', 
-    PROFESSIONAL = 'PROFESSIONAL'
+    REGULAR = 'REGULAR', 
+    PROFESSIONAL = 'BUSINESS', 
+    SYSTEM = 'SYSTEM'
 }
 
 @Entity()
