@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UnauthorizedException, Patch, Get, Query, UnprocessableEntityException} from '@nestjs/common';
+import { Body, Controller, Post, UnauthorizedException, Patch, Query, UnprocessableEntityException} from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { AccountNameAlreadyExistsException, AccountAlreadyExistsException } from 'src/util/custom_errors';
@@ -107,14 +107,10 @@ export class AuthController {
     }
 
 
-    @Get('/exists/email')
-    async checkEmailExists(@Query() query: string) {
+    @Post('/exists/email')
+    async checkEmailExists(@Body() body) {
 
-        if(!query['email_address'] || !query['account_type']){
-            throw new UnprocessableEntityException();
-        }
-
-        const emailExists = await this.authService.accountExists(query['email_address']);
+        const emailExists = await this.authService.accountExists(body['email_address']);
 
         return {
             body: emailExists
