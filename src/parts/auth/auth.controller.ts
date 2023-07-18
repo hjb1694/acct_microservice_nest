@@ -117,5 +117,16 @@ export class AuthController {
         }
 
     }
+
+    @Post('/exists/account_name')
+    async checkAccountNameExists(@Body() body) {
+
+        const accountNameExists = await this.authService.accountNameExists(body.account_name);
+
+        return {
+            body: accountNameExists
+        }
+
+    }
     
 }
