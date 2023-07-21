@@ -4,8 +4,9 @@ import { CustomValidNewPassword, CustomValidUsername, CustomIsValidDate, CustomI
 export class RegisterDto {
 
     @IsNotEmpty()
+    @IsString()
     @CustomValidUsername({
-        message: 'Account name must be between 8 and 15 alphanumeric characters with optional underscore seperator.'
+        message: 'Account name must be between 6 and 12 alphanumeric characters with optional underscore seperator.'
     })
     account_name: string;
 

@@ -43,7 +43,8 @@ export class AuthController {
             message: 'SUCCESS!', 
             body: {
                 user_id, 
-                vericode: newAcctData.vericode
+                vericode: newAcctData.vericode, 
+                account_name: body.account_name
             }
         }
 

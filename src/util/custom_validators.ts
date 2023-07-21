@@ -21,7 +21,7 @@ export function CustomValidUsername(validationOptions: ValidationOptions = {mess
             validator: {
                 validate(value: any){
 
-                    const regs = /^[A-Z0-9]+\_[A-Z0-9]+$/i;
+                    const regs = /^[A-Z0-9]+\_?[A-Z0-9]+$/i;
 
                     return (
                         typeof value === 'string' &&
