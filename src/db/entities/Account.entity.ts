@@ -106,7 +106,7 @@ export default class Account {
     vericodes: Vericode[]
 
     @OneToOne(() => PersonalProfile, (profile) => profile.user)
-    personalPersonaProfile: PersonalProfile
+    personalProfile: PersonalProfile
 
     @OneToOne(() => UserPoints, (userPoints) => userPoints.user)
     userPoints: UserPoints

@@ -78,7 +78,7 @@ export default class PersonalPersonaProfile {
     })
     profileImageURI: string;
 
-    @OneToOne(() => Account, (account) => account.personalPersonaProfile)
+    @OneToOne(() => Account, (account) => account.personalProfile)
     @JoinColumn({
         name: 'user_id'
     })
