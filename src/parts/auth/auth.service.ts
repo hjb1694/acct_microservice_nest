@@ -207,7 +207,7 @@ export class AuthService {
         if(!isMatchingPassword) return false;
 
         return {
-            userId: data.id, 
+            user_id: data.id, 
             account_status: data.accountStatus, 
             role: data.userRole
         }

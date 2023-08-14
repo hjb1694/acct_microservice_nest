@@ -44,7 +44,8 @@ export class AuthController {
             body: {
                 user_id, 
                 vericode: newAcctData.vericode, 
-                account_name: body.account_name
+                account_name: body.account_name, 
+                role: 'REGULAR_USER'
             }
         }
 
