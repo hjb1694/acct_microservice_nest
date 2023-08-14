@@ -88,7 +88,11 @@ export class AuthController {
             throw new UnauthorizedException();
         }
 
-        return user;
+        return {
+            status: 200, 
+            message: 'SUCCESS!', 
+            body: user
+        };
 
     }
 
