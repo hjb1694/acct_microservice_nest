@@ -209,7 +209,8 @@ export class AuthService {
         return {
             user_id: data.id, 
             account_status: data.accountStatus, 
-            role: data.userRole
+            role: data.userRole, 
+            account_name: data.accountName
         }
 
 
