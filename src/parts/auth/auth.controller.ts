@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UnauthorizedException, Patch, Query, UnprocessableEntityException} from '@nestjs/common';
+import { Body, Controller, Post, UnauthorizedException, Patch } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { AccountNameAlreadyExistsException, AccountAlreadyExistsException } from 'src/util/custom_errors';
