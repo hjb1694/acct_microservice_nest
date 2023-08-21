@@ -8,9 +8,17 @@ export class SocialService {
         private authService: AuthService
     ){}
 
-    fetchPublicProfile(account_name: string){
+    async fetchPublicProfile(account_name: string){
 
+        const user = await this.authService.fetchUserInfoByAccountName(account_name);
+
+        if (!user) {
+            return false;
+        }
+
+        const userInfo = {}
         
+
 
     }
 

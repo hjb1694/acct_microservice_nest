@@ -15,8 +15,8 @@ export class SocialController {
     Fetch a profile for a user that is NOT authenticated/logged-in
     */
     @Get('/profile/public')
-    profileForPublic(@Body() body: ProfileFetcPublichDto) {
-
+    async profileForPublic(@Body() body: ProfileFetcPublichDto) {
+        await this.socialService.fetchPublicProfile(body.account_name);
     }
 
     /*

@@ -254,5 +254,18 @@ export class AuthService {
 
     }
 
+    async fetchUserInfoByAccountName(account_name: string) {
+
+        const user = await this.dataSource
+        .getRepository(Account)
+        .createQueryBuilder('account')
+        .select()
+        .where('account_name = :account_name', {account_name})
+        .getOne();
+
+        return user;
+
+    }
+
 
 }
