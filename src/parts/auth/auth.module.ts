@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import Account from 'src/db/entities/Account.entity';
 import Vericode from 'src/db/entities/Vericode.entity';
-import PersonalPersonaProfile from 'src/db/entities/PersonalProfile.entity';
+import PersonalProfile from 'src/db/entities/PersonalProfile.entity';
 import { UserPoints } from 'src/db/entities/UserPoints.entity';
 
 @Module({
@@ -12,7 +12,7 @@ import { UserPoints } from 'src/db/entities/UserPoints.entity';
     TypeOrmModule.forFeature([
       Account, 
       Vericode, 
-      PersonalPersonaProfile, 
+      PersonalProfile, 
       UserPoints
     ])
   ],

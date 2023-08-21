@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Get } from '@nestjs/common';
+import { Body, Controller, Post, Get, NotFoundException } from '@nestjs/common';
 import { BlockActionDto } from './dto/block_action.dto';
 import { ProfileFetcPublichDto } from './dto/profile_fetch_public.dto';
 import { SocialService } from './social.service';
@@ -16,7 +16,11 @@ export class SocialController {
     */
     @Get('/profile/public')
     async profileForPublic(@Body() body: ProfileFetcPublichDto) {
-        await this.socialService.fetchPublicProfile(body.account_name);
+        const profile = await this.socialService.fetchPublicProfile(body.account_name);
+        if(!profile){
+            throw new NotFoundException();
+        }
+        return profile;
     }
 
     /*
