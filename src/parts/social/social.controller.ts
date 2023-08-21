@@ -1,6 +1,5 @@
-import { Body, Controller, Post, Get, NotFoundException } from '@nestjs/common';
+import { Body, Controller, Post, Get, NotFoundException, Query, UnprocessableEntityException } from '@nestjs/common';
 import { BlockActionDto } from './dto/block_action.dto';
-import { ProfileFetcPublichDto } from './dto/profile_fetch_public.dto';
 import { SocialService } from './social.service';
 
 
@@ -15,8 +14,15 @@ export class SocialController {
     Fetch a profile for a user that is NOT authenticated/logged-in
     */
     @Get('/profile/public')
-    async profileForPublic(@Body() body: ProfileFetcPublichDto) {
-        const profile = await this.socialService.fetchPublicProfile(body.account_name);
+    async profileForPublic(@Query() query) {
+
+        const accountName = query['account_name'];
+
+        if(!accountName){
+            throw new UnprocessableEntityException();
+        }
+
+        const profile = await this.socialService.fetchPublicProfile(accountName);
         if(!profile){
             throw new NotFoundException();
         }
