@@ -32,6 +32,14 @@ export default class PersonalPersonaProfile {
     userId: number;
 
     @Column({
+        type: 'bool', 
+        name: 'is_private_profile', 
+        nullable: false, 
+        default: false
+    })
+    isPrivateProfile: boolean;
+
+    @Column({
         type: 'text', 
         name: 'bio', 
         nullable: true
