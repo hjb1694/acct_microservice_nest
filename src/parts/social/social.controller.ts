@@ -33,7 +33,23 @@ export class SocialController {
     Fetch a profile for a user that is authenticated/logged-in
     */
     @Get('/profile/auth-user')
-    profileForAuthUser() {
+    async profileForAuthUser(@Query() query) {
+
+        const authUserAccountName = query['auth_user_account_name'];
+        const profileAccountName = query['profile_account_name'];
+
+        if(!authUserAccountName || !profileAccountName){
+            throw new UnprocessableEntityException();
+        }
+
+        const profile = await this.socialService.fetchProfileForAuthUser(authUserAccountName, profileAccountName);
+
+        if(!profile){
+            throw new NotFoundException();
+        }
+
+        return profile;
+
 
     }
 
