@@ -14,6 +14,18 @@ export class SocialService {
         private authService: AuthService
     ){}
 
+    async checkIfProfileExists(account_name){
+
+        const user = await this.authService.fetchUserInfoByAccountName(account_name);
+
+        if (!user || user.accountType === AccountType.SYSTEM) {
+            return false;
+        }
+
+        return true;
+
+    }
+
     async fetchPublicProfile(account_name: string){
 
         const user = await this.authService.fetchUserInfoByAccountName(account_name);

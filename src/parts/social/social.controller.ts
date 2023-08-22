@@ -38,6 +38,24 @@ export class SocialController {
     }
 
 
+    @Get('/profile-exists')
+    async profileExists(@Query() query) {
+
+        const accountName = query['account_name'];
+
+        if(!accountName){
+            throw new UnprocessableEntityException();
+        }
+
+        const exists = await this.socialService.checkIfProfileExists(accountName);
+
+        return {
+            exists
+        }
+
+    }
+
+
     @Post('/block-action')
     blockAction(@Body() body: BlockActionDto) {
 
