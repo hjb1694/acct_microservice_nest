@@ -107,16 +107,12 @@ export class SocialService {
             profileReturnData['is_deactivated'] = true;
             return profileReturnData;
         }else{
-            profileReturnData['profile_image_uri'] = profile.profileImageURI;
-
-            
+            profileReturnData['profile_image_uri'] = profile.profileImageURI;  
         }
 
 
 
         return profileReturnData;
-
-
 
 
     }
