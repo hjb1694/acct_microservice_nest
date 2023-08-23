@@ -111,7 +111,7 @@ export class SocialService {
             return false;
         }
 
-        let profile;
+        let profile: any;
 
         if(profileUser.accountType === AccountType.REGULAR){
             profile = await this.dataSource
@@ -142,14 +142,22 @@ export class SocialService {
             profileReturnData['profile_image_uri'] = profile.profileImageURI;  
         }
 
-        const [blockExists, followStatus] = await Promise.all([
-            this.checkIfBlockExists(profileUser.id, authUser.id), 
-            this.checkFollowStatus(authUser.id, profileUser.id)
-        ]) 
+        let blockExists: boolean = false;
+        let followStatus: string | null = null;
+
+        if(authUser.id !== profileUser.id){
+            const [blockExistsResult, followStatusResult] = await Promise.all([
+                this.checkIfBlockExists(profileUser.id, authUser.id), 
+                this.checkFollowStatus(authUser.id, profileUser.id)
+            ]) 
+            blockExists = blockExistsResult;
+            followStatus = followStatusResult;
+        }
 
         if(
-            blockExists || 
-            (profile.is_private_profile && (followStatus !== FollowStatus.APPROVED))
+            authUser.id !== profileUser.id &&
+            (blockExists || 
+            (profile.is_private_profile && (followStatus !== FollowStatus.APPROVED)))
         ){
             profileReturnData['is_private_profile'] = true;
         }else{
