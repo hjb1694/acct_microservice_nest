@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-enum FollowStatus {
+export enum FollowStatus {
     PENDING = 'PENDING', 
     APPROVED = 'APPROVED'
 }

@@ -3,7 +3,9 @@ import { AuthService } from '../auth/auth.service';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import PersonalPersonaProfile from 'src/db/entities/PersonalProfile.entity';
-import Account, { AccountStatus, AccountType } from 'src/db/entities/Account.entity';
+import { AccountStatus, AccountType } from 'src/db/entities/Account.entity';
+import { UserBlocks } from 'src/db/entities/UserBlocks.entity';
+import { FollowStatus, UserFollows } from 'src/db/entities/UserFollows.entity';
 
 @Injectable()
 export class SocialService {
@@ -23,6 +25,35 @@ export class SocialService {
         }
 
         return true;
+
+    }
+
+    async checkFollowStatus(followerUserId: number, followedUserId: number): Promise<null | string> {
+
+        const result = await this.dataSource
+        .getRepository(UserFollows)
+        .createQueryBuilder('user_follows')
+        .select()
+        .where('follower_user_id = :followerUserId AND followed_user_id = :followedUserId', {followerUserId, followedUserId})
+        .getOne();
+
+        if(!result){
+            return null;
+        }else{
+            return result.status;
+        }
+    }
+
+    async checkIfBlockExists(blockerUserId: number, blockedUserId: number) {
+
+        const result = await this.dataSource
+        .getRepository(UserBlocks)
+        .createQueryBuilder('user_blocks')
+        .select()
+        .where('blocker_user_id = :blockerUserId AND blocked_user_id = :blockedUserId', {blockerUserId, blockedUserId})
+        .getCount();
+
+        return !!result;
 
     }
 
@@ -97,7 +128,8 @@ export class SocialService {
         let profileReturnData = {
             user_id: profileUser.id,
             profile_image_uri: null, 
-            is_deactivated: false
+            is_deactivated: false, 
+            account_type: profileUser.accountType
         }
         
         if(
@@ -108,6 +140,27 @@ export class SocialService {
             return profileReturnData;
         }else{
             profileReturnData['profile_image_uri'] = profile.profileImageURI;  
+        }
+
+        const [blockExists, followStatus] = await Promise.all([
+            this.checkIfBlockExists(profileUser.id, authUser.id), 
+            this.checkFollowStatus(authUser.id, profileUser.id)
+        ]) 
+
+        if(
+            blockExists || 
+            (profile.is_private_profile && (followStatus !== FollowStatus.APPROVED))
+        ){
+            profileReturnData['is_private_profile'] = true;
+        }else{
+            profileReturnData['is_private_profile'] = false; 
+
+            if(profileUser.accountType = AccountType.REGULAR){
+                profileReturnData['about'] = {};
+                profileReturnData['about']['bio'] = profile.bio;
+                profileReturnData['about']['location'] = profile.location_text;
+                profileReturnData['about']['gender'] = profile.gender;
+            }
         }
 
 
