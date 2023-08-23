@@ -166,7 +166,7 @@ export class SocialService {
             if(profileUser.accountType = AccountType.REGULAR){
                 profileReturnData['about'] = {};
                 profileReturnData['about']['bio'] = profile.bio;
-                profileReturnData['about']['location'] = profile.location_text;
+                profileReturnData['about']['location'] = profile.locationText;
                 profileReturnData['about']['gender'] = profile.gender;
             }
         }
