@@ -186,18 +186,20 @@ export class SocialService {
 
     }
 
-    async unfollowUser(followerUserId: number, followedUserId: number) {
+    async unfollowUser(followerUserId: number, followedUserId: number): Promise<void> {
 
         await this.dataSource
         .getRepository(UserFollows)
         .createQueryBuilder('user_follows')
+        .delete()
+        .from(UserFollows)
         .where('follower_user_id = :followerUserId AND followedUserId = :followedUserId', {followerUserId, followedUserId})
-        .delete();
+        .execute();
 
     }
 
 
-    async blockUser(blockerUserId: number, blockedUserId: number) {
+    async blockUser(blockerUserId: number, blockedUserId: number): Promise<void> {
 
         const [blockerUserData, blockedUserData] = await Promise.all([
             this.authService.fetchUserInfoById(blockerUserId), 
@@ -242,6 +244,18 @@ export class SocialService {
             this.unfollowUser(blockedUserId, blockerUserId), 
             userBlocksRepo.save(userBlock)
         ]);
+
+    }
+
+    async unblockUser(blockerUserId: number, blockedUserId: number) {
+
+        await this.dataSource
+        .getRepository(UserBlocks)
+        .createQueryBuilder('user_blocks')
+        .delete()
+        .from(UserBlocks)
+        .where('blocker_user_id = :blockerUserId AND blocked_user_id = :blockedUserId', {blockerUserId, blockedUserId})
+        .execute();
 
     }
 
