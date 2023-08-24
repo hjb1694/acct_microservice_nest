@@ -142,21 +142,24 @@ export class SocialService {
             profileReturnData['profile_image_uri'] = profile.profileImageURI;  
         }
 
-        let blockExists: boolean = false;
+        let blockAgainstAuthUserExists: boolean = false;
+        let blockAgainstProfileUserExists: boolean = false;
         let followStatus: string | null = null;
 
         if(authUser.id !== profileUser.id){
-            const [blockExistsResult, followStatusResult] = await Promise.all([
+            const [blockAgainstAuthUserExistsResult, blockAgainstProfileUserExistsResult, followStatusResult] = await Promise.all([
                 this.checkIfBlockExists(profileUser.id, authUser.id), 
+                this.checkIfBlockExists(authUser.id, profileUser.id),
                 this.checkFollowStatus(authUser.id, profileUser.id)
             ]) 
-            blockExists = blockExistsResult;
+            blockAgainstAuthUserExists = blockAgainstAuthUserExistsResult;
+            blockAgainstProfileUserExists = blockAgainstProfileUserExistsResult;
             followStatus = followStatusResult;
         }
 
         if(
             authUser.id !== profileUser.id &&
-            (blockExists || 
+            (blockAgainstAuthUserExists || 
             (profile.is_private_profile && (followStatus !== FollowStatus.APPROVED)))
         ){
             profileReturnData['is_private_profile'] = true;
@@ -171,7 +174,9 @@ export class SocialService {
             }
         }
 
-
+        profileReturnData['social'] = {};
+        profileReturnData['social']['user_viewed_is_blocked'] = blockAgainstProfileUserExists;
+        profileReturnData['social']['follow_status'] = followStatus;
 
         return profileReturnData;
 
