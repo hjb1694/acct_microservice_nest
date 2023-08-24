@@ -84,7 +84,8 @@ export class SocialService {
 
         const profileData = {
             user_id: user.id, 
-            account_name
+            account_name, 
+            role: profile.userRole
         }
 
         if(user.accountStatus === AccountStatus.BANNED || user.accountStatus === AccountStatus.DEACTIVATED_BY_USER){
@@ -130,7 +131,8 @@ export class SocialService {
             user_id: profileUser.id,
             profile_image_uri: null, 
             is_deactivated: false, 
-            account_type: profileUser.accountType
+            account_type: profileUser.accountType,
+            role: profileUser.userRole
         }
         
         if(
