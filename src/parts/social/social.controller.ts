@@ -75,6 +75,19 @@ export class SocialController {
     @Post('/block-action')
     blockAction(@Body() body: BlockActionDto) {
 
+        const blockerUserId = body.blockerUserId;
+        const blockedUserId = body.blockedUserId;
+        const blockAction = body.action;
+
+        if(blockAction === 'BLOCK'){
+            this.socialService.blockUser(blockerUserId, blockedUserId);
+        }
+
+        return {
+            success: true
+        }
+
+
     }
 
 

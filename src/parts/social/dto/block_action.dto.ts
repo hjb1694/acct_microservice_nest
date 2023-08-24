@@ -17,7 +17,7 @@ export class BlockActionDto {
     @IsInt({
         message: 'blocked_user_id must be an integer value.'
     })
-    blocked_user_id: number;
+    blockedUserId: number;
 
     @IsNotEmpty({
         message: 'Action must be included.'
