@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import PersonalPersonaProfile from 'src/db/entities/PersonalProfile.entity';
-import { AccountStatus, AccountType } from 'src/db/entities/Account.entity';
+import { AccountStatus, AccountType, UserRole } from 'src/db/entities/Account.entity';
 import { UserBlocks } from 'src/db/entities/UserBlocks.entity';
 import { FollowStatus, UserFollows } from 'src/db/entities/UserFollows.entity';
+import { AccountDeactivatedException, AccountFrozenException, AccountNotVerifiedException, BlockAlreadyExistsException, CannotBlockHighRoleUserException } from 'src/util/custom_errors';
 
 @Injectable()
 export class SocialService {
@@ -180,6 +181,65 @@ export class SocialService {
 
         return profileReturnData;
 
+
+    }
+
+    async unfollowUser(followerUserId: number, followedUserId: number) {
+
+        await this.dataSource
+        .getRepository(UserFollows)
+        .createQueryBuilder('user_follows')
+        .where('follower_user_id = :followerUserId AND followedUserId = :followedUserId', {followerUserId, followedUserId})
+        .delete();
+
+    }
+
+
+    async blockUser(blockerUserId: number, blockedUserId: number) {
+
+        const [blockerUserData, blockedUserData] = await Promise.all([
+            this.authService.fetchUserInfoById(blockerUserId), 
+            this.authService.fetchUserInfoById(blockedUserId)
+        ]);
+
+        const highRoles = [UserRole.ADMIN, UserRole.STAFF, UserRole.SYSTEM];
+
+        if(!blockerUserData || !blockedUserData){
+            throw new NotFoundException();
+        }
+
+        if(blockerUserData.accountStatus === AccountStatus.NOT_VERIFIED){
+            throw new AccountNotVerifiedException();
+        }
+
+        if(blockerUserData.accountStatus === AccountStatus.FROZEN){
+            throw new AccountFrozenException();
+        }
+
+        if([AccountStatus.BANNED, AccountStatus.DEACTIVATED_BY_USER].includes(blockerUserData.accountStatus)){
+            throw new AccountDeactivatedException();
+        }
+
+        if(highRoles.includes(blockedUserData.userRole) || highRoles.includes(blockerUserData.userRole)){
+            throw new CannotBlockHighRoleUserException();
+        }
+
+        const blockAlreadyExists = this.checkIfBlockExists(blockerUserId, blockedUserId);
+
+        if(blockAlreadyExists){
+            throw new BlockAlreadyExistsException();
+        }
+
+        const userBlocksRepo = this.dataSource.getRepository(UserBlocks);
+        const userBlock = new UserBlocks();
+        userBlock.blocker_user_id = blockerUserId;
+        userBlock.blocked_user_id = blockedUserId;
+
+        await Promise.all([
+            this.unfollowUser(blockerUserId, blockedUserId), 
+            this.unfollowUser(blockedUserId, blockerUserId), 
+            userBlocksRepo.save(userBlock)
+        ]);
 
     }
 
