@@ -48,3 +48,15 @@ export class BlockAlreadyExistsException extends HttpException {
         super('ERR_BLOCK_ALREADY_EXISTS: Block already exists.', HttpStatus.FORBIDDEN);
     }
 }
+
+export class BlockExistsException extends HttpException {
+    constructor(){
+        super('ERR_BLOCK_EXISTS: You have either blocked this user or are blocked by this user', HttpStatus.FORBIDDEN);
+    }
+}
+
+export class FollowRequestAlreadyExistsException extends HttpException {
+    constructor(){
+        super('ERR_FOLLOW_ALREADY_EXISTS: Follow or follow request already exists', HttpStatus.FORBIDDEN);
+    }
+}

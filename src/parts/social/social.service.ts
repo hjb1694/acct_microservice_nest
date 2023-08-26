@@ -6,7 +6,7 @@ import PersonalPersonaProfile from 'src/db/entities/PersonalProfile.entity';
 import { AccountStatus, AccountType, UserRole } from 'src/db/entities/Account.entity';
 import { UserBlocks } from 'src/db/entities/UserBlocks.entity';
 import { FollowStatus, UserFollows } from 'src/db/entities/UserFollows.entity';
-import { AccountDeactivatedException, AccountFrozenException, AccountNotVerifiedException, BlockAlreadyExistsException, CannotBlockHighRoleUserException } from 'src/util/custom_errors';
+import { AccountDeactivatedException, AccountFrozenException, AccountNotVerifiedException, BlockAlreadyExistsException, BlockExistsException, CannotBlockHighRoleUserException } from 'src/util/custom_errors';
 
 @Injectable()
 export class SocialService {
@@ -198,6 +198,41 @@ export class SocialService {
 
     }
 
+    async followUser(followerUserId: number, followedUserId: number) {
+
+        const [followerUserData, followedUserData] = await Promise.all([
+            this.authService.fetchUserInfoById(followerUserId), 
+            this.authService.fetchUserInfoById(followedUserId)
+        ]);
+
+        if(!followerUserData || !followedUserData || followedUserData.accountType === AccountType.SYSTEM){
+            throw new NotFoundException();
+        }
+
+        if(followerUserData.accountStatus === AccountStatus.NOT_VERIFIED){
+            throw new AccountNotVerifiedException();
+        }
+
+        if(followerUserData.accountStatus === AccountStatus.FROZEN){
+            throw new AccountFrozenException();
+        }
+
+        if([AccountStatus.BANNED, AccountStatus.DEACTIVATED_BY_USER].includes(followerUserData.accountStatus)){
+            throw new AccountDeactivatedException();
+        }
+
+        const [blockFromFollowerExists, blockFromFollowedExists] = await Promise.all([
+            this.checkIfBlockExists(followerUserId, followedUserId), 
+            this.checkIfBlockExists(followedUserId, followerUserId)
+        ]);
+
+        if(blockFromFollowerExists || blockFromFollowedExists){
+            throw new BlockExistsException();
+        }
+
+
+    }
+
 
     async blockUser(blockerUserId: number, blockedUserId: number): Promise<void> {
 
@@ -208,7 +243,7 @@ export class SocialService {
 
         const highRoles = [UserRole.ADMIN, UserRole.STAFF, UserRole.SYSTEM];
 
-        if(!blockerUserData || !blockedUserData){
+        if(!blockerUserData || !blockedUserData || blockedUserData.accountType === AccountType.SYSTEM){
             throw new NotFoundException();
         }
 

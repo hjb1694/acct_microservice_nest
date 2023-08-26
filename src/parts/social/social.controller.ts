@@ -1,6 +1,7 @@
 import { Body, Controller, Post, Get, NotFoundException, Query, UnprocessableEntityException } from '@nestjs/common';
 import { BlockActionDto } from './dto/block_action.dto';
 import { SocialService } from './social.service';
+import { FollowActionDto } from './dto/follow_action.dto';
 
 
 @Controller('social')
@@ -87,6 +88,15 @@ export class SocialController {
             success: true
         }
 
+
+    }
+
+    @Post('/follow-action')
+    followUser(@Body() body: FollowActionDto) {
+
+        const followerUserId = body.followerUserId;
+        const followedUserId = body.followedUserId;
+        const followAction = body.action;
 
     }
 
