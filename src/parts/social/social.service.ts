@@ -6,7 +6,7 @@ import PersonalPersonaProfile from 'src/db/entities/PersonalProfile.entity';
 import { AccountStatus, AccountType, UserRole } from 'src/db/entities/Account.entity';
 import { UserBlocks } from 'src/db/entities/UserBlocks.entity';
 import { FollowStatus, UserFollows } from 'src/db/entities/UserFollows.entity';
-import { AccountDeactivatedException, AccountFrozenException, AccountNotVerifiedException, BlockAlreadyExistsException, BlockExistsException, CannotBlockHighRoleUserException } from 'src/util/custom_errors';
+import { AccountDeactivatedException, AccountFrozenException, AccountNotVerifiedException, BlockAlreadyExistsException, BlockExistsException, CannotBlockHighRoleUserException, FollowRequestAlreadyExistsException } from 'src/util/custom_errors';
 
 @Injectable()
 export class SocialService {
@@ -221,13 +221,18 @@ export class SocialService {
             throw new AccountDeactivatedException();
         }
 
-        const [blockFromFollowerExists, blockFromFollowedExists] = await Promise.all([
+        const [blockFromFollowerExists, blockFromFollowedExists, followStatus] = await Promise.all([
             this.checkIfBlockExists(followerUserId, followedUserId), 
-            this.checkIfBlockExists(followedUserId, followerUserId)
+            this.checkIfBlockExists(followedUserId, followerUserId), 
+            this.checkFollowStatus(followerUserId, followedUserId)
         ]);
 
         if(blockFromFollowerExists || blockFromFollowedExists){
             throw new BlockExistsException();
+        }
+
+        if(followStatus){
+            throw new FollowRequestAlreadyExistsException();
         }
 
 
